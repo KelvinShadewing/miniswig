@@ -24,12 +24,12 @@ WrapperCreator::create_wrapper(Namespace* ns)
         << " *  '" << fromfile << "'\n"
         << " * DO NOT CHANGE\n"
         << " */\n"
-        << "#ifndef HEADER_SUPERTUX_SCRIPTING_WRAPPER_HPP\n" //TODO avoid hardcoding
-        << "#define HEADER_SUPERTUX_SCRIPTING_WRAPPER_HPP\n"
+        << "#ifndef HEADER_BRUX_SQUIRREL_WRAPPER_HPP\n" //TODO avoid hardcoding
+        << "#define HEADER_BRUX_SQUIRREL_WRAPPER_HPP\n"
         << "\n"
         << "#include <squirrel.h>\n"
         << "\n"
-        << "namespace Scripting {\n"
+        << "namespace BruxAPI {\n"
         << "\n";
 
     hppout << "void register_" << modulename << "_wrapper(HSQUIRRELVM v);\n"
@@ -59,17 +59,17 @@ WrapperCreator::create_wrapper(Namespace* ns)
         << " * DO NOT CHANGE\n"
         << " */\n"
         << "\n"
-        << "#include \"scripting/wrapper.hpp\"\n"
+        << "#include \"squirrel/wrapper.hpp\"\n"
         << "\n"
         << "#include <assert.h>\n"
         << "#include <limits>\n"
         << "#include <sstream>\n"
         << "#include <squirrel.h>\n"
         << "\n"
-        << "#include \"scripting/squirrel_error.hpp\"\n"
-        << "#include \"scripting/wrapper.interface.hpp\"\n"
+        << "#include \"squirrel/squirrel_error.hpp\"\n"
+        << "#include \"squirrel/wrapper_interface.hpp\"\n"
         << "\n"
-        << "namespace Scripting {\n"
+        << "namespace BruxAPI {\n"
         << "namespace Wrapper {\n"
         << "\n";
 
