@@ -350,6 +350,37 @@ parameter:
             free($2);
             current_function->parameters.push_back(parameter);
         }
+    | type T_ID '=' T_INT
+        {
+            Parameter parameter;
+            parameter.type = *($1);
+            delete $1;
+            parameter.name = $2;
+            free($2);
+            parameter.default_val = std::to_string($4);
+            current_function->parameters.push_back(parameter);
+        }
+    | type T_ID '=' T_FLOAT
+        {
+            Parameter parameter;
+            parameter.type = *($1);
+            delete $1;
+            parameter.name = $2;
+            free($2);
+            parameter.default_val = std::to_string($4);
+            current_function->parameters.push_back(parameter);
+        }
+    | type T_ID '=' T_STRING
+        {
+            Parameter parameter;
+            parameter.type = *($1);
+            delete $1;
+            parameter.name = $2;
+            free($2);
+            parameter.default_val = $4;
+            free($4);
+            current_function->parameters.push_back(parameter);
+        }
 ;
 
 type:

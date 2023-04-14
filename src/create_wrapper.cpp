@@ -348,7 +348,7 @@ WrapperCreator::create_function_wrapper(Class* _class, Function* function)
         } else {
             char argname[64];
             snprintf(argname, sizeof(argname), "arg%d", i);
-            prepare_argument(p.type, i + arg_offset, argname);
+            prepare_argument(p, i + arg_offset, argname);
         }
         ++i;
     }
@@ -444,37 +444,54 @@ WrapperCreator::create_function_wrapper(Class* _class, Function* function)
 }
 
 void
-WrapperCreator::prepare_argument(const Type& type, size_t index,
+WrapperCreator::prepare_argument(const Parameter& param, size_t index,
         const std::string& var)
 {
+    const Type& type = param.type;
     if(type.ref > 0 && type.atomic_type != StringType::instance())
         throw std::runtime_error("References not handled yet");
     if(type.pointer > 0)
         throw std::runtime_error("Pointers not handled yet");
     if(type.atomic_type == &BasicType::INT) {
-        out << ind << "SQInteger " << var << ";\n";
-        out << ind << "if(SQ_FAILED(sq_getinteger(vm, " << index << ", &" << var << "))) {\n";
-        out << ind << ind << "sq_throwerror(vm, _SC(\"Argument " << (index-1) << " not an integer\"));\n";
-        out << ind << ind << "return SQ_ERROR;\n";
-        out << ind << "}\n";
+        out << ind << "SQInteger " << var << (param.default_val.empty() ? "" : " = ") << param.default_val << ";\n";
+        if (param.default_val.empty()) {
+          out << ind << "if(SQ_FAILED(sq_getinteger(vm, " << index << ", &" << var << "))) {\n";
+          out << ind << ind << "sq_throwerror(vm, _SC(\"Argument " << (index-1) << " not an integer\"));\n";
+          out << ind << ind << "return SQ_ERROR;\n";
+          out << ind << "}\n";
+        } else {
+          out << ind  << "sq_getinteger(vm, " << index << ", &" << var << ");\n";
+        }
     } else if(type.atomic_type == &BasicType::FLOAT) {
-        out << ind << "SQFloat " << var << ";\n";
-        out << ind << "if(SQ_FAILED(sq_getfloat(vm, " << index << ", &" << var << "))) {\n";
-        out << ind << ind << "sq_throwerror(vm, _SC(\"Argument " << (index-1) << " not a float\"));\n";
-        out << ind << ind << "return SQ_ERROR;\n";
-        out << ind << "}\n";
+        out << ind << "SQFloat " << var << (param.default_val.empty() ? "" : " = ") << param.default_val << ";\n";
+        if (param.default_val.empty()) {
+          out << ind << "if(SQ_FAILED(sq_getfloat(vm, " << index << ", &" << var << "))) {\n";
+          out << ind << ind << "sq_throwerror(vm, _SC(\"Argument " << (index-1) << " not a float\"));\n";
+          out << ind << ind << "return SQ_ERROR;\n";
+          out << ind << "}\n";
+        } else {
+          out << ind  << "sq_getfloat(vm, " << index << ", &" << var << ");\n";
+        }
     } else if(type.atomic_type == &BasicType::BOOL) {
-        out << ind << "SQBool " << var << ";\n";
-        out << ind << "if(SQ_FAILED(sq_getbool(vm, " << index << ", &" << var << "))) {\n";
-        out << ind << ind << "sq_throwerror(vm, _SC(\"Argument " << (index-1) << " not a bool\"));\n";
-        out << ind << ind << "return SQ_ERROR;\n";
-        out << ind << "}\n";
+        out << ind << "SQBool " << var << (param.default_val.empty() ? "" : " = ") << param.default_val << ";\n";
+        if (param.default_val.empty()) {
+          out << ind << "if(SQ_FAILED(sq_getbool(vm, " << index << ", &" << var << "))) {\n";
+          out << ind << ind << "sq_throwerror(vm, _SC(\"Argument " << (index-1) << " not a bool\"));\n";
+          out << ind << ind << "return SQ_ERROR;\n";
+          out << ind << "}\n";
+        } else {
+          out << ind  << "sq_getbool(vm, " << index << ", &" << var << ");\n";
+        }
     } else if(type.atomic_type == StringType::instance()) {
-        out << ind << "const SQChar* " << var << ";\n";
-        out << ind << "if(SQ_FAILED(sq_getstring(vm, " << index << ", &" << var << "))) {\n";
-        out << ind << ind << "sq_throwerror(vm, _SC(\"Argument " << (index-1) << " not a string\"));\n";
-        out << ind << ind << "return SQ_ERROR;\n";
-        out << ind << "}\n";
+        out << ind << "const SQChar* " << var << (param.default_val.empty() ? "" : " = ") << param.default_val << ";\n";
+        if (param.default_val.empty()) {
+          out << ind << "if(SQ_FAILED(sq_getstring(vm, " << index << ", &" << var << "))) {\n";
+          out << ind << ind << "sq_throwerror(vm, _SC(\"Argument " << (index-1) << " not a string\"));\n";
+          out << ind << ind << "return SQ_ERROR;\n";
+          out << ind << "}\n";
+        } else {
+          out << ind << "sq_getstring(vm, " << index << ", &" << var << ");\n";
+        }
     } else {
         std::ostringstream msg;
         msg << "Type '" << type.atomic_type->name << "' not supported yet.";

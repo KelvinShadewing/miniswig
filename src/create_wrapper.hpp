@@ -40,7 +40,7 @@ private:
     void create_class_release_hook(Class* _class);
     void create_squirrel_instance(Class* _class);
     void create_function_wrapper(Class* _class, Function* function);
-    void prepare_argument(const Type& type, size_t idx, const std::string& var);
+    void prepare_argument(const Parameter& param, size_t idx, const std::string& var);
     void push_to_stack(const Type& type, const std::string& var);
 
 private:

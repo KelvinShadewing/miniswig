@@ -166,11 +166,13 @@ class Parameter
 public:
     Parameter() :
         name(),
-        type()
+        type(),
+        default_val()
     { }
 
     std::string name;
     Type type;
+    std::string default_val;
 };
 
 class ClassMember {
