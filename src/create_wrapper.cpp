@@ -102,7 +102,7 @@ WrapperCreator::create_wrapper(Namespace* ns)
 
     out << "void register_" << modulename << "_wrapper(HSQUIRRELVM v)\n"
         << "{\n"
-        << ind << "using namespace wrapper;\n"
+        << ind << "using namespace Wrapper;\n"
         << "\n";
 
     create_register_constants_code(ns);
@@ -531,7 +531,7 @@ WrapperCreator::create_squirrel_instance(Class* _class)
         << ns_prefix << _class->name
         << "* object, bool setup_releasehook)\n"
         << "{\n"
-        << ind << "using namespace wrapper;\n"
+        << ind << "using namespace Wrapper;\n"
         << "\n"
         << ind << "sq_pushroottable(v);\n"
         << ind << "sq_pushstring(v, \"" << _class->name << "\", -1);\n"
