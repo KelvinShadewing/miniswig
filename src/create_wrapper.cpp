@@ -38,11 +38,7 @@ WrapperCreator::create_wrapper(Namespace* ns)
         << "\n"
         << "#include <squirrel.h>\n"
         << "\n"
-<<<<<<< HEAD
-        << "namespace scripting {\n"
-=======
         << "namespace " << selected_namespace << " {\n"
->>>>>>> master
         << "\n";
 
     hppout << "void register_" << modulename << "_wrapper(HSQUIRRELVM v);\n"
@@ -79,20 +75,12 @@ WrapperCreator::create_wrapper(Namespace* ns)
         << "#include <sstream>\n"
         << "#include <squirrel.h>\n"
         << "\n"
-<<<<<<< HEAD
-        << "#include \"squirrel/squirrel_error.hpp\"\n"
-        << "#include \"scripting/wrapper.interface.hpp\"\n"
-        << "\n"
-        << "namespace scripting {\n"
-        << "namespace wrapper {\n"
-=======
         << "#include \"" << inputhpp_include << "\"\n"
         << "\n"
         << "#include \"squirrel/squirrel_error.hpp\"\n"
         << "\n"
         << "namespace " << selected_namespace << " {\n"
         << "namespace Wrapper {\n"
->>>>>>> master
         << "\n";
 
     for(auto& type : ns->types) {
