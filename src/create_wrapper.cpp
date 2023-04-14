@@ -138,11 +138,11 @@ WrapperCreator::create_register_function_code(Function* function, Class* _class)
 
           for(; p != function->parameters.end(); ++p) {
             if(p->type.atomic_type == &BasicType::INT) {
-              out << "i";
+              out << "b|n";
             } else if(p->type.atomic_type == &BasicType::FLOAT) {
-              out << "n";
+              out << "b|n";
             } else if(p->type.atomic_type == &BasicType::BOOL) {
-              out << "b";
+              out << "b|n";
             } else if(p->type.atomic_type == StringType::instance()) {
               out << "s";
             } else {
