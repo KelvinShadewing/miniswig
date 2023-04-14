@@ -11,10 +11,19 @@ void
 WrapperCreator::create_wrapper(Namespace* ns)
 {
     std::string fromfile = original_file != "" ? original_file : inputfile;
+    if (inputhpp_include.empty()) {
+      inputhpp_include = fromfile;
+    }
 
     if(selected_namespace != "") {
         ns_prefix = selected_namespace;
         ns_prefix += "::";
+    }
+
+    // Module name for header (uppercase).
+    std::string moduleheader = modulename;
+    for (auto& ch : moduleheader) {
+      ch = std::toupper(ch);
     }
 
     // hpp file
@@ -24,12 +33,16 @@ WrapperCreator::create_wrapper(Namespace* ns)
         << " *  '" << fromfile << "'\n"
         << " * DO NOT CHANGE\n"
         << " */\n"
-        << "#ifndef HEADER_SUPERTUX_SCRIPTING_WRAPPER_HPP\n" //TODO avoid hardcoding
-        << "#define HEADER_SUPERTUX_SCRIPTING_WRAPPER_HPP\n"
+        << "#ifndef HEADER_" << moduleheader << "_SQUIRREL_WRAPPER_HPP\n"
+        << "#define HEADER_" << moduleheader << "_SQUIRREL_WRAPPER_HPP\n"
         << "\n"
         << "#include <squirrel.h>\n"
         << "\n"
+<<<<<<< HEAD
         << "namespace scripting {\n"
+=======
+        << "namespace " << selected_namespace << " {\n"
+>>>>>>> master
         << "\n";
 
     hppout << "void register_" << modulename << "_wrapper(HSQUIRRELVM v);\n"
@@ -59,18 +72,27 @@ WrapperCreator::create_wrapper(Namespace* ns)
         << " * DO NOT CHANGE\n"
         << " */\n"
         << "\n"
-        << "#include \"scripting/wrapper.hpp\"\n"
+        << "#include \"" << outputhpp_include << "\"\n"
         << "\n"
         << "#include <assert.h>\n"
         << "#include <limits>\n"
         << "#include <sstream>\n"
         << "#include <squirrel.h>\n"
         << "\n"
+<<<<<<< HEAD
         << "#include \"squirrel/squirrel_error.hpp\"\n"
         << "#include \"scripting/wrapper.interface.hpp\"\n"
         << "\n"
         << "namespace scripting {\n"
         << "namespace wrapper {\n"
+=======
+        << "#include \"" << inputhpp_include << "\"\n"
+        << "\n"
+        << "#include \"squirrel/squirrel_error.hpp\"\n"
+        << "\n"
+        << "namespace " << selected_namespace << " {\n"
+        << "namespace Wrapper {\n"
+>>>>>>> master
         << "\n";
 
     for(auto& type : ns->types) {
@@ -122,7 +144,7 @@ WrapperCreator::create_register_function_code(Function* function, Class* _class)
     } else {
       out << ind << "sq_setparamscheck(v, SQ_MATCHTYPEMASKSTRING, \"";
 
-      out << "x|t";
+      out << ".";
 
       if(!function->parameters.empty())
         {
@@ -406,8 +428,17 @@ WrapperCreator::create_function_wrapper(Class* _class, Function* function)
     } else if(function->return_type.is_void()) {
         out << ind << ind << "return 0;\n";
     } else {
-        push_to_stack(function->return_type, "return_value");
-        out << ind << ind << "return 1;\n";
+        // Determine if the function returns SQInteger.
+        std::ostringstream return_t;
+        function->return_type.atomic_type->write_c(return_t);
+
+        // If the function returns SQInteger, use that to determine if the Squirrel function will return data.
+        if (return_t.str() == "SQInteger") {
+            out << ind << ind << "return return_value;\n";
+        } else {
+            push_to_stack(function->return_type, "return_value");
+            out << ind << ind << "return 1;\n";
+        }
     }
 
     out << "\n";
